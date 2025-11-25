@@ -6,6 +6,54 @@ const extractPrice = (priceStr: string): number => {
   return match ? parseInt(match[1], 10) : 0;
 };
 
+// Image mapping to provide realistic visuals
+const getImageForBlend = (id: number, segment: string): string => {
+  // Base URL for Unsplash source
+  const base = "https://images.unsplash.com/photo-";
+  const params = "?auto=format&fit=crop&w=600&q=80";
+
+  // Specific images selected for their relevance to flours, grains, and health
+  const images: Record<string, string> = {
+    diabetic: "1615485925694-a69ea5300366", // grains in bowl
+    weight: "1490645935967-10de6ba17061", // healthy food bowl
+    kids: "1554520158-a6a1c4e97c6c", // pancakes/soft food
+    women: "1606787366850-de6330128bfc", // wholesome food flatlay
+    senior: "1512621776951-a57141f2eefd", // healthy soup/meal
+    heart: "1596040033229-a9821ebd058d", // spices and heart health ingredients
+    immunity: "1615484477744-12e19d77f2dc", // turmeric and ingredients
+    pregnancy: "1550547660-d9450f859349", // fresh ingredients
+    athlete: "1571091718767-18b5b1457add", // protein rich meal
+    glutenfree: "1574323347407-f5e1ad6d020b", // field/grain
+    budget: "1586961324435-015ca2f35542", // roti stack
+    default: "1509440159596-0249088772ff" // flour/dough
+  };
+
+  const seg = segment.toLowerCase();
+  let imageId = images.default;
+
+  if (seg.includes('diabetes')) imageId = images.diabetic;
+  else if (seg.includes('weight')) imageId = images.weight;
+  else if (seg.includes('child') || seg.includes('kid')) imageId = images.kids;
+  else if (seg.includes('women') || seg.includes('pcos')) imageId = images.women;
+  else if (seg.includes('senior') || seg.includes('joint')) imageId = images.senior;
+  else if (seg.includes('heart')) imageId = images.heart;
+  else if (seg.includes('immun')) imageId = images.immunity;
+  else if (seg.includes('pregnan') || seg.includes('nursing')) imageId = images.pregnancy;
+  else if (seg.includes('athlete') || seg.includes('muscle')) imageId = images.athlete;
+  else if (seg.includes('gluten')) imageId = images.glutenfree;
+  else if (seg.includes('budget') || seg.includes('family')) imageId = images.budget;
+
+  // Mix it up slightly based on ID to avoid total repetition
+  if (id % 3 === 0 && imageId === images.default) {
+     return `${base}1565557623262-b51c2513a641${params}`; // Roti
+  }
+  if (id % 4 === 0 && imageId === images.default) {
+     return `${base}1540189549336-e6e99c3679fe${params}`; // Grains
+  }
+
+  return `${base}${imageId}${params}`;
+};
+
 const rawData = [
   {
     ID: 1,
@@ -1000,5 +1048,6 @@ export const blends: Blend[] = rawData.map(item => ({
   processingTechniques: item["Processing Techniques"],
   bioavailabilityNotes: item["Bioavailability Notes"],
   sensoryExpectations: item["Sensory Expectations"],
-  rotiQualityScore: item["Roti Quality Score"]
+  rotiQualityScore: item["Roti Quality Score"],
+  image: getImageForBlend(item.ID, item.Segment)
 }));

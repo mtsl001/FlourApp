@@ -11,28 +11,34 @@
           extend: {
             colors: {
               brand: {
-                50: '#fcfaf5',
-                100: '#f7f1e6',
-                200: '#eddcc5',
-                300: '#e0c09d',
-                400: '#d19e70',
-                500: '#c5804b',
-                600: '#b8663d',
-                700: '#994f33',
-                800: '#7d412e',
-                900: '#653628',
+                50: '#f9f8f6',  /* Warmer off-white (Village Organica vibe) */
+                100: '#f0eadd',
+                200: '#e0d2bc',
+                300: '#cbb393',
+                400: '#b5926b',
+                500: '#9f7649',
+                600: '#8c603b',
+                700: '#6d482f',
+                800: '#5c3d2a',
+                900: '#4d3324',
+              },
+              accent: {
+                500: '#D4AF37', /* Gold for premium touches */
+                600: '#B5952F',
               }
             },
             fontFamily: {
               sans: ['Inter', 'system-ui', 'sans-serif'],
+              serif: ['Playfair Display', 'Georgia', 'serif'], /* Added for headings */
             }
           }
         }
       }
     </script>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
       body { font-family: 'Inter', sans-serif; }
+      h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', serif; }
     </style>
   <script type="importmap">
 {

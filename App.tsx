@@ -7,6 +7,7 @@ import Shop from './pages/Shop';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import About from './pages/About';
 import { CartProvider } from './context/CartContext';
 
 // Simple ScrollToTop component handled via wrapper since react-router-dom v6 ScrollRestoration works best with data router but we are using HashRouter here in a simple way
@@ -32,7 +33,7 @@ const App: React.FC = () => {
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
-              <Route path="/about" element={<div className="p-20 text-center text-xl">About Page Coming Soon...</div>} />
+              <Route path="/about" element={<About />} />
             </Routes>
           </main>
           <Footer />

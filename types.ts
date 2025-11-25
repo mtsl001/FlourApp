@@ -30,6 +30,7 @@ export interface Blend {
   bioavailabilityNotes: string;
   sensoryExpectations: string;
   rotiQualityScore: number;
+  image: string;
 }
 
 export interface CartItem extends Blend {

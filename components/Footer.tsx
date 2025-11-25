@@ -8,48 +8,51 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <Wheat className="h-6 w-6 text-brand-300" />
-              <span className="font-bold text-xl text-white">FlouRblend</span>
+              <div className="bg-brand-800 p-2 rounded-full">
+                <Wheat className="h-6 w-6 text-brand-200" />
+              </div>
+              <span className="font-serif font-bold text-xl text-white">The Ancient Harvest Co.</span>
             </div>
-            <p className="text-sm text-brand-200">
-              Precision nutrition tailored for your health needs. Preservative-free, science-backed ancient grain blends.
+            <p className="text-sm text-brand-200 leading-relaxed">
+              We honor the wisdom of our ancestors and the purity of Bharat’s soil. Hand-picked, stone-ground, and scientifically balanced nutrition for the modern family.
             </p>
           </div>
           
           <div>
-            <h3 className="text-white font-semibold mb-4">Shop</h3>
+            <h3 className="text-white font-serif font-semibold mb-4 text-lg">Shop</h3>
             <ul className="space-y-2 text-sm text-brand-200">
-              <li><a href="#/shop" className="hover:text-white">All Blends</a></li>
-              <li><a href="#/shop" className="hover:text-white">Diabetic Care</a></li>
-              <li><a href="#/shop" className="hover:text-white">Weight Management</a></li>
-              <li><a href="#/shop" className="hover:text-white">Kids Nutrition</a></li>
+              <li><a href="#/shop" className="hover:text-white transition-colors">All Blends</a></li>
+              <li><a href="#/shop" className="hover:text-white transition-colors">Diabetic Care</a></li>
+              <li><a href="#/shop" className="hover:text-white transition-colors">Weight Management</a></li>
+              <li><a href="#/shop" className="hover:text-white transition-colors">Kids Nutrition</a></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-white font-semibold mb-4">Company</h3>
+            <h3 className="text-white font-serif font-semibold mb-4 text-lg">Philosophy</h3>
             <ul className="space-y-2 text-sm text-brand-200">
-              <li><a href="#" className="hover:text-white">Our Story</a></li>
-              <li><a href="#" className="hover:text-white">Quality Promise</a></li>
-              <li><a href="#" className="hover:text-white">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white">Wholesale</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Vedic Wisdom</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Farm to Fork</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Our Farmers</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-white font-semibold mb-4">Connect</h3>
+            <h3 className="text-white font-serif font-semibold mb-4 text-lg">Connect</h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-brand-300 hover:text-white"><Instagram className="h-5 w-5" /></a>
-              <a href="#" className="text-brand-300 hover:text-white"><Twitter className="h-5 w-5" /></a>
-              <a href="#" className="text-brand-300 hover:text-white"><Facebook className="h-5 w-5" /></a>
+              <a href="#" className="text-brand-300 hover:text-white transition-colors"><Instagram className="h-6 w-6" /></a>
+              <a href="#" className="text-brand-300 hover:text-white transition-colors"><Twitter className="h-6 w-6" /></a>
+              <a href="#" className="text-brand-300 hover:text-white transition-colors"><Facebook className="h-6 w-6" /></a>
             </div>
-            <div className="mt-4">
+            <div className="mt-6">
               <p className="text-xs text-brand-400">FSSAI Lic No: 1234567890</p>
             </div>
           </div>
         </div>
-        <div className="border-t border-brand-800 mt-8 pt-8 text-center text-xs text-brand-400">
-          © {new Date().getFullYear()} FlouRblend. All rights reserved.
+        <div className="border-t border-brand-800 mt-10 pt-8 text-center text-xs text-brand-400 flex flex-col md:flex-row justify-between items-center">
+          <span>© {new Date().getFullYear()} The Ancient Harvest Co. All rights reserved.</span>
+          <span className="mt-2 md:mt-0 italic font-serif">Survey Bhavantu Sukhinah</span>
         </div>
       </div>
     </footer>

@@ -6,7 +6,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
-      const stored = localStorage.getItem('flourblend_cart');
+      const stored = localStorage.getItem('ancientharvest_cart');
       return stored ? JSON.parse(stored) : [];
     } catch {
       return [];
@@ -14,7 +14,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   });
 
   useEffect(() => {
-    localStorage.setItem('flourblend_cart', JSON.stringify(cart));
+    localStorage.setItem('ancientharvest_cart', JSON.stringify(cart));
   }, [cart]);
 
   const addToCart = (product: Blend) => {
