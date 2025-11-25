@@ -1,5 +1,6 @@
 import React from 'react';
 import { Wheat, Instagram, Twitter, Facebook } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
@@ -21,20 +22,20 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-white font-serif font-semibold mb-4 text-lg">Shop</h3>
             <ul className="space-y-2 text-sm text-brand-200">
-              <li><a href="#/shop" className="hover:text-white transition-colors">All Blends</a></li>
-              <li><a href="#/shop" className="hover:text-white transition-colors">Diabetic Care</a></li>
-              <li><a href="#/shop" className="hover:text-white transition-colors">Weight Management</a></li>
-              <li><a href="#/shop" className="hover:text-white transition-colors">Kids Nutrition</a></li>
+              <li><Link to="/shop" className="hover:text-white transition-colors">All Blends</Link></li>
+              <li><Link to="/shop" className="hover:text-white transition-colors">Diabetic Care</Link></li>
+              <li><Link to="/shop" className="hover:text-white transition-colors">Weight Management</Link></li>
+              <li><Link to="/shop" className="hover:text-white transition-colors">Kids Nutrition</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="text-white font-serif font-semibold mb-4 text-lg">Philosophy</h3>
             <ul className="space-y-2 text-sm text-brand-200">
-              <li><a href="#" className="hover:text-white transition-colors">Vedic Wisdom</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Farm to Fork</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Our Farmers</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
+              <li><Link to="/about" className="hover:text-white transition-colors">Vedic Wisdom</Link></li>
+              <li><Link to="/about" className="hover:text-white transition-colors">Farm to Fork</Link></li>
+              <li><Link to="/faq" className="hover:text-white transition-colors">FAQs</Link></li>
+              <li><Link to="/about" className="hover:text-white transition-colors">Contact Us</Link></li>
             </ul>
           </div>
 

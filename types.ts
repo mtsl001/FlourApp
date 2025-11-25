@@ -37,6 +37,21 @@ export interface CartItem extends Blend {
   quantity: number;
 }
 
+export interface Order {
+  id: string;
+  date: string;
+  items: CartItem[];
+  total: number;
+  status: 'Processing' | 'Shipped' | 'Delivered';
+  shippingAddress: string;
+}
+
+export interface User {
+  name: string;
+  email: string;
+  orders: Order[];
+}
+
 export interface CartContextType {
   cart: CartItem[];
   addToCart: (product: Blend) => void;

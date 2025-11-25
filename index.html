@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FlouRblend | Precision Nutrition</title>
+    <title>The Ancient Harvest Co. | Pure Ancient Grains</title>
+    <!-- Razorpay script for future real integration -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -30,6 +32,15 @@
             fontFamily: {
               sans: ['Inter', 'system-ui', 'sans-serif'],
               serif: ['Playfair Display', 'Georgia', 'serif'], /* Added for headings */
+            },
+            animation: {
+              fadeIn: 'fadeIn 0.5s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
             }
           }
         }
@@ -39,6 +50,10 @@
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
       body { font-family: 'Inter', sans-serif; }
       h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', serif; }
+      /* Custom scrollbar for filters/tabs */
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
     </style>
   <script type="importmap">
 {

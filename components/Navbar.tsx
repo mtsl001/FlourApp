@@ -1,12 +1,13 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, X, Wheat, Sparkles } from 'lucide-react';
+import { ShoppingCart, Menu, X, Wheat, Sparkles, User, LogIn } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { cartCount } = useCart();
+  const { user, isAuthenticated } = useAuth();
   const location = useLocation();
 
   const toggleMenu = () => setIsOpen(!isOpen);
@@ -49,6 +50,18 @@ const Navbar: React.FC = () => {
                 </span>
               )}
             </Link>
+
+            {isAuthenticated ? (
+              <Link to="/profile" className="flex items-center gap-2 text-slate-700 hover:text-brand-800">
+                <div className="w-8 h-8 bg-brand-50 rounded-full flex items-center justify-center border border-brand-200">
+                  <User className="w-5 h-5" />
+                </div>
+              </Link>
+            ) : (
+              <Link to="/login" className="flex items-center gap-1 text-slate-600 hover:text-brand-800 font-medium text-sm">
+                <LogIn className="w-4 h-4" /> Login
+              </Link>
+            )}
           </div>
 
           <div className="flex items-center md:hidden">
@@ -75,6 +88,13 @@ const Navbar: React.FC = () => {
             <Link to="/quiz" onClick={closeMenu} className="block px-4 py-3 rounded-lg text-base font-bold text-brand-700 bg-brand-50 hover:bg-brand-100 border-l-4 border-brand-500">✨ Find My Blend</Link>
             <Link to="/shop" onClick={closeMenu} className="block px-4 py-3 rounded-lg text-base font-medium text-slate-700 hover:text-brand-900 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500">Shop Blends</Link>
             <Link to="/about" onClick={closeMenu} className="block px-4 py-3 rounded-lg text-base font-medium text-slate-700 hover:text-brand-900 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500">Our Philosophy</Link>
+            <div className="border-t border-slate-100 my-2 pt-2">
+              {isAuthenticated ? (
+                <Link to="/profile" onClick={closeMenu} className="block px-4 py-3 rounded-lg text-base font-medium text-slate-700 hover:text-brand-900 hover:bg-brand-50">My Profile</Link>
+              ) : (
+                <Link to="/login" onClick={closeMenu} className="block px-4 py-3 rounded-lg text-base font-medium text-slate-700 hover:text-brand-900 hover:bg-brand-50">Login / Sign Up</Link>
+              )}
+            </div>
           </div>
         </div>
       )}

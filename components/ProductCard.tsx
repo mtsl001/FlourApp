@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Star, Plus, Minus } from 'lucide-react';
+import { ShoppingBag, Star, Plus, Minus, Scale } from 'lucide-react';
 import { Blend } from '../types';
 import { useCart } from '../context/CartContext';
+import { useCompare } from '../context/CompareContext';
 
 interface ProductCardProps {
   blend: Blend;
@@ -10,13 +11,25 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ blend }) => {
   const { cart, addToCart, updateQuantity } = useCart();
+  const { compareList, addToCompare, removeFromCompare, isInCompare } = useCompare();
   
   // Find if item is in cart
   const cartItem = cart.find(item => item.id === blend.id);
   const quantity = cartItem ? cartItem.quantity : 0;
 
+  const isComparing = isInCompare(blend.id);
+
+  const toggleCompare = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isComparing) {
+      removeFromCompare(blend.id);
+    } else {
+      addToCompare(blend);
+    }
+  };
+
   return (
-    <div className="bg-white rounded-xl overflow-hidden flex flex-col h-full border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+    <div className="bg-white rounded-xl overflow-hidden flex flex-col h-full border border-slate-100 hover:shadow-xl transition-all duration-300 group relative">
       <Link to={`/product/${blend.id}`} className="relative overflow-hidden block">
         <div className="aspect-[4/3] overflow-hidden">
           <img 
@@ -33,6 +46,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ blend }) => {
             Low GI
           </div>
         )}
+        
+        {/* Compare Button */}
+        <button 
+          onClick={toggleCompare}
+          className={`absolute bottom-3 right-3 p-2 rounded-full shadow-md transition-all duration-200 z-10 ${
+            isComparing 
+              ? 'bg-brand-600 text-white ring-2 ring-brand-300' 
+              : 'bg-white/90 text-slate-500 hover:bg-white hover:text-brand-600'
+          }`}
+          title={isComparing ? "Remove from Compare" : "Add to Compare"}
+        >
+          <Scale className="w-5 h-5" />
+        </button>
       </Link>
       
       <div className="p-5 flex-grow flex flex-col">
