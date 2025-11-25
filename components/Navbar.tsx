@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, X, Wheat } from 'lucide-react';
+import { ShoppingCart, Menu, X, Wheat, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 const Navbar: React.FC = () => {
@@ -35,6 +36,11 @@ const Navbar: React.FC = () => {
             <Link to="/" className={`px-3 py-2 ${isActive('/')}`}>Home</Link>
             <Link to="/shop" className={`px-3 py-2 ${isActive('/shop')}`}>Shop Blends</Link>
             <Link to="/about" className={`px-3 py-2 ${isActive('/about')}`}>Our Philosophy</Link>
+            
+            <Link to="/quiz" className="flex items-center gap-2 bg-brand-100 hover:bg-brand-200 text-brand-800 px-4 py-2 rounded-full font-bold text-sm transition-colors border border-brand-200">
+               <Sparkles className="w-4 h-4" /> Find My Blend
+            </Link>
+
             <Link to="/cart" className="relative p-3 text-brand-900 hover:bg-brand-50 rounded-full transition-colors group">
               <ShoppingCart className="h-6 w-6 group-hover:scale-105 transition-transform" />
               {cartCount > 0 && (
@@ -66,6 +72,7 @@ const Navbar: React.FC = () => {
         <div className="md:hidden bg-white border-t border-brand-100 shadow-xl absolute w-full z-50">
           <div className="px-4 pt-4 pb-6 space-y-2">
             <Link to="/" onClick={closeMenu} className="block px-4 py-3 rounded-lg text-base font-medium text-slate-700 hover:text-brand-900 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500">Home</Link>
+            <Link to="/quiz" onClick={closeMenu} className="block px-4 py-3 rounded-lg text-base font-bold text-brand-700 bg-brand-50 hover:bg-brand-100 border-l-4 border-brand-500">✨ Find My Blend</Link>
             <Link to="/shop" onClick={closeMenu} className="block px-4 py-3 rounded-lg text-base font-medium text-slate-700 hover:text-brand-900 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500">Shop Blends</Link>
             <Link to="/about" onClick={closeMenu} className="block px-4 py-3 rounded-lg text-base font-medium text-slate-700 hover:text-brand-900 hover:bg-brand-50 border-l-4 border-transparent hover:border-brand-500">Our Philosophy</Link>
           </div>
