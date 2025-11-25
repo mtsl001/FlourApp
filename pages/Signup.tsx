@@ -13,7 +13,8 @@ const Signup: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email && password && name) {
-      login(email, name);
+      // Pass arguments in correct order: email, password, name
+      login(email, password, name);
       navigate('/profile');
     }
   };

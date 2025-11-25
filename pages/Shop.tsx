@@ -1,30 +1,28 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Filter, X } from 'lucide-react';
-import { blends } from '../data/blends';
+import { useData } from '../context/DataContext';
 import ProductCard from '../components/ProductCard';
 
 const Shop: React.FC = () => {
+  const { products } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSegment, setSelectedSegment] = useState<string>('All');
   const [showFilters, setShowFilters] = useState(false);
 
   // Extract unique segments for filter
   const segments = useMemo(() => {
-    const allSegments = blends.map(b => b.segment);
-    // Rough grouping or just unique string matching. 
-    // Given the data is somewhat categorical but verbose, let's try to group or just list them.
-    // For MVP, simple unique list.
+    const allSegments = products.map(b => b.segment);
     return ['All', ...Array.from(new Set(allSegments))];
-  }, []);
+  }, [products]);
 
   const filteredBlends = useMemo(() => {
-    return blends.filter(blend => {
+    return products.filter(blend => {
       const matchesSearch = blend.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             blend.heroClaim.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesSegment = selectedSegment === 'All' || blend.segment === selectedSegment;
       return matchesSearch && matchesSegment;
     });
-  }, [searchTerm, selectedSegment]);
+  }, [searchTerm, selectedSegment, products]);
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">

@@ -31,6 +31,7 @@ export interface Blend {
   sensoryExpectations: string;
   rotiQualityScore: number;
   image: string;
+  stock?: number; // Inventory tracking
 }
 
 export interface CartItem extends Blend {
@@ -42,13 +43,16 @@ export interface Order {
   date: string;
   items: CartItem[];
   total: number;
-  status: 'Processing' | 'Shipped' | 'Delivered';
+  status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
   shippingAddress: string;
+  customerName?: string;
+  customerEmail?: string;
 }
 
 export interface User {
   name: string;
   email: string;
+  role?: 'admin' | 'customer';
   orders: Order[];
 }
 
@@ -60,4 +64,16 @@ export interface CartContextType {
   clearCart: () => void;
   cartTotal: number;
   cartCount: number;
+}
+
+export interface DataContextType {
+  products: Blend[];
+  orders: Order[];
+  users: User[];
+  addProduct: (product: Blend) => void;
+  updateProduct: (product: Blend) => void;
+  deleteProduct: (id: number) => void;
+  placeOrder: (order: Order) => void;
+  updateOrderStatus: (id: string, status: Order['status']) => void;
+  registerUser: (user: User) => void;
 }

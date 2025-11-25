@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, ArrowRight, RefreshCcw, ShoppingBag, Plus, Minus, Star, ChevronRight, AlertCircle } from 'lucide-react';
-import { blends } from '../data/blends';
+import { useData } from '../context/DataContext';
 import { useCart } from '../context/CartContext';
 import { Blend } from '../types';
 
@@ -82,8 +81,8 @@ interface ScoredBlend extends Blend {
   matchReasons: string[];
 }
 
-const calculateScores = (answers: Record<string, any>): ScoredBlend[] => {
-  return blends.map(blend => {
+const calculateScores = (products: Blend[], answers: Record<string, any>): ScoredBlend[] => {
+  return products.map(blend => {
     let score = 0;
     const reasons: string[] = [];
 
@@ -195,6 +194,7 @@ const calculateScores = (answers: Record<string, any>): ScoredBlend[] => {
 // --- Component ---
 
 const Quiz: React.FC = () => {
+  const { products } = useData();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [isFinished, setIsFinished] = useState(false);
@@ -231,7 +231,7 @@ const Quiz: React.FC = () => {
   };
 
   const finishQuiz = (finalAnswers: Record<string, any>) => {
-    const scored = calculateScores(finalAnswers);
+    const scored = calculateScores(products, finalAnswers);
     setResults(scored);
     setIsFinished(true);
     window.scrollTo(0,0);

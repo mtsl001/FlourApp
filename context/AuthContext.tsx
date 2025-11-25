@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Order } from '../types';
+import { useData } from './DataContext';
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, name?: string) => void;
+  login: (email: string, password?: string, name?: string) => boolean;
   logout: () => void;
   addOrder: (order: Order) => void;
   isAuthenticated: boolean;
@@ -12,6 +13,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { placeOrder, users, registerUser } = useData();
+  
   const [user, setUser] = useState<User | null>(() => {
     try {
       const stored = localStorage.getItem('ancientharvest_user');
@@ -29,17 +32,42 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [user]);
 
-  const login = (email: string, name: string = 'Valued Customer') => {
-    // In a real app, this would validate against a backend
-    // For MVP, we simulate a successful login and restore history if available
-    const existingHistory = localStorage.getItem(`ancientharvest_orders_${email}`);
-    const orders = existingHistory ? JSON.parse(existingHistory) : [];
+  // Login function now strictly accepts email, password, and optionally name
+  const login = (email: string, password?: string, name: string = 'Valued Customer'): boolean => {
+    // Admin Login Check - STRICT check on email AND password
+    if (email === 'admin@ancientharvest.co' && password === 'admin') {
+      setUser({
+        name: 'Admin',
+        email: email,
+        role: 'admin',
+        orders: []
+      });
+      return true;
+    }
+
+    // Regular User Logic
+    const existingUser = users.find(u => u.email === email);
     
-    setUser({
-      name,
+    // Simulate loading history from local storage for this email if not found in context (legacy support)
+    const existingHistory = localStorage.getItem(`ancientharvest_orders_${email}`);
+    const localOrders = existingHistory ? JSON.parse(existingHistory) : [];
+
+    // If user exists, use their name, otherwise use the provided name (or default)
+    const userName = existingUser ? existingUser.name : name;
+
+    const currentUser: User = existingUser || {
+      name: userName,
       email,
-      orders
-    });
+      role: 'customer',
+      orders: localOrders
+    };
+
+    if (!existingUser) {
+      registerUser(currentUser);
+    }
+
+    setUser(currentUser);
+    return true;
   };
 
   const logout = () => {
@@ -53,8 +81,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const updatedUser = { ...user, orders: updatedOrders };
     
     setUser(updatedUser);
-    // Persist orders specifically for this email so they survive logout/login
     localStorage.setItem(`ancientharvest_orders_${user.email}`, JSON.stringify(updatedOrders));
+    
+    // Also push to global DB
+    placeOrder({ ...order, customerEmail: user.email, customerName: user.name });
   };
 
   return (

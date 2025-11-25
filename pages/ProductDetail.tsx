@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ShoppingBag, ChevronLeft, Check, ChefHat, Info, Activity, Star, Plus, Minus } from 'lucide-react';
-import { blends } from '../data/blends';
+import { useData } from '../context/DataContext';
 import { useCart } from '../context/CartContext';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const blend = blends.find(b => b.id === Number(id));
+  const { products } = useData();
+  const blend = products.find(b => b.id === Number(id));
   const { cart, addToCart, updateQuantity } = useCart();
   const [activeTab, setActiveTab] = useState<'overview' | 'nutrition' | 'usage'>('overview');
 

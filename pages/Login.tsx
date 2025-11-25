@@ -11,10 +11,18 @@ const Login: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login logic
     if (email && password) {
-      login(email, 'Returning User'); 
-      navigate('/profile');
+      // Pass the actual password state, not a hardcoded string
+      const success = login(email, password); 
+      
+      if (success) {
+        // Check if it's the admin account to redirect properly
+        if (email === 'admin@ancientharvest.co' && password === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/profile');
+        }
+      }
     }
   };
 
@@ -62,6 +70,11 @@ const Login: React.FC = () => {
 
         <div className="mt-6 text-center text-sm text-slate-600">
           Don't have an account? <Link to="/signup" className="text-brand-700 font-bold hover:underline">Create one</Link>
+        </div>
+        
+        <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+          <p className="text-xs text-slate-400">Admin Demo Access:</p>
+          <p className="text-xs font-mono text-slate-500 mt-1">admin@ancientharvest.co / admin</p>
         </div>
       </div>
     </div>

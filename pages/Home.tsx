@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, Leaf, Wheat, Search, Microscope, Truck } from 'lucide-react';
-import { blends } from '../data/blends';
+import { useData } from '../context/DataContext';
 import ProductCard from '../components/ProductCard';
 
 const Home: React.FC = () => {
-  const featuredBlends = blends.slice(0, 3);
+  const { products } = useData();
+  const featuredBlends = products.slice(0, 3);
 
   return (
     <div className="flex flex-col min-h-screen bg-brand-50">
