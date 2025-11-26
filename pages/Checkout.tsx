@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -7,22 +8,33 @@ import { Order } from '../types';
 
 const Checkout: React.FC = () => {
   const { cart, cartTotal, clearCart } = useCart();
-  const { user, isAuthenticated, addOrder } = useAuth();
+  const { user, isAuthenticated, addOrder, updateProfile } = useAuth();
   const navigate = useNavigate();
   
   const [step, setStep] = useState<'details' | 'payment' | 'processing' | 'success'>('details');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi'>('card');
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
+    name: '',
+    email: '',
+    phone: '',
     address: '',
     city: '',
+    state: '',
     zip: ''
   });
 
+  // Pre-fill form from user profile
   useEffect(() => {
     if (user) {
-      setFormData(prev => ({ ...prev, name: user.name, email: user.email }));
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        address: user.address || '',
+        city: user.city || '',
+        state: user.state || '',
+        zip: user.zip || ''
+      });
     }
   }, [user]);
 
@@ -32,22 +44,39 @@ const Checkout: React.FC = () => {
     window.scrollTo(0, 0);
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     setStep('processing');
     
+    // Auto-save address to profile if logged in
+    if (isAuthenticated) {
+      try {
+        await updateProfile({
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zip: formData.zip
+        });
+      } catch (err) {
+        console.error("Failed to update profile", err);
+      }
+    }
+
     // Simulate payment gateway delay
-    setTimeout(() => {
+    setTimeout(async () => {
       const newOrder: Order = {
         id: `AHC-${Date.now()}`,
         date: new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
         items: [...cart],
         total: cartTotal,
         status: 'Processing',
-        shippingAddress: `${formData.address}, ${formData.city}, ${formData.zip}`
+        shippingAddress: `${formData.address}, ${formData.city}, ${formData.state} - ${formData.zip}`,
+        customerName: formData.name,
+        customerEmail: formData.email
       };
 
       if (isAuthenticated) {
-        addOrder(newOrder);
+        await addOrder(newOrder);
       }
       
       clearCart();
@@ -56,9 +85,18 @@ const Checkout: React.FC = () => {
     }, 2500);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const indianStates = [
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", 
+    "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", 
+    "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", 
+    "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", 
+    "West Bengal", "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", 
+    "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+  ];
 
   if (step === 'success') {
     return (
@@ -153,12 +191,25 @@ const Checkout: React.FC = () => {
                   <input required name="email" type="email" value={formData.email} onChange={handleChange} className="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="john@example.com" />
                 </div>
                 <div className="col-span-1 md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                  <input required name="phone" type="tel" value={formData.phone} onChange={handleChange} className="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="+91 98765 43210" />
+                </div>
+                <div className="col-span-1 md:col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Address</label>
                   <textarea required name="address" value={formData.address} onChange={handleChange} rows={2} className="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="123 Wellness St"></textarea>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
                   <input required name="city" value={formData.city} onChange={handleChange} className="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-brand-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">State</label>
+                  <select required name="state" value={formData.state} onChange={handleChange} className="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+                    <option value="">Select State</option>
+                    {indianStates.map(state => (
+                      <option key={state} value={state}>{state}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">ZIP Code</label>

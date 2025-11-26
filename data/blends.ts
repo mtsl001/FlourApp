@@ -1022,7 +1022,7 @@ export const blends: Blend[] = rawData.map(item => ({
   name: item["Blend Name"],
   segment: item.Segment,
   heroClaim: item["Hero Claim"],
-  composition: item.Composition,
+  composition: item.Composition.replace(/\s*\d+(\.\d+)?%/g, ''), // Strip percentages for proprietary reasons
   targetDemographic: item["Target Demographic"],
   priceString: item["Price Tier"],
   price: extractPrice(item["Price Tier"]),

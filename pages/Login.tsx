@@ -1,27 +1,38 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Wheat } from 'lucide-react';
+import { Wheat, Loader2, AlertCircle } from 'lucide-react';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
     if (email && password) {
-      // Pass the actual password state, not a hardcoded string
-      const success = login(email, password); 
+      const { error } = await login(email, password);
       
-      if (success) {
-        // Check if it's the admin account to redirect properly
-        if (email === 'admin@ancientharvest.co' && password === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/profile');
-        }
+      if (error) {
+        setError(error.message || 'Failed to login');
+        setIsLoading(false);
+      } else {
+        // Success handled by onAuthStateChange in context, but we redirect here
+        // Brief timeout to ensure state updates
+        setTimeout(() => {
+           if (email === 'admin@ancientharvest.co') {
+             navigate('/admin');
+           } else {
+             navigate('/profile');
+           }
+        }, 500);
       }
     }
   };
@@ -36,6 +47,12 @@ const Login: React.FC = () => {
           <h1 className="text-2xl font-serif font-bold text-brand-900">Welcome Back</h1>
           <p className="text-slate-500 mt-2">Sign in to view your harvest history</p>
         </div>
+
+        {error && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4" /> {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -62,19 +79,15 @@ const Login: React.FC = () => {
           </div>
           <button 
             type="submit" 
-            className="w-full bg-brand-800 hover:bg-brand-900 text-white py-3 rounded-lg font-bold transition-colors shadow-md"
+            disabled={isLoading}
+            className="w-full bg-brand-800 hover:bg-brand-900 disabled:bg-brand-600 text-white py-3 rounded-lg font-bold transition-colors shadow-md flex items-center justify-center gap-2"
           >
-            Sign In
+            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
           </button>
         </form>
 
         <div className="mt-6 text-center text-sm text-slate-600">
           Don't have an account? <Link to="/signup" className="text-brand-700 font-bold hover:underline">Create one</Link>
-        </div>
-        
-        <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-          <p className="text-xs text-slate-400">Admin Demo Access:</p>
-          <p className="text-xs font-mono text-slate-500 mt-1">admin@ancientharvest.co / admin</p>
         </div>
       </div>
     </div>

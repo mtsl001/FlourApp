@@ -1,3 +1,4 @@
+
 export interface Blend {
   id: number;
   name: string;
@@ -53,6 +54,11 @@ export interface User {
   name: string;
   email: string;
   role?: 'admin' | 'customer';
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
   orders: Order[];
 }
 
@@ -76,4 +82,15 @@ export interface DataContextType {
   placeOrder: (order: Order) => void;
   updateOrderStatus: (id: string, status: Order['status']) => void;
   registerUser: (user: User) => void;
+}
+
+export interface AuthContextType {
+  user: User | null;
+  login: (email: string, password: string) => Promise<{ error: any }>;
+  signup: (email: string, password: string, name: string) => Promise<{ error: any }>;
+  logout: () => Promise<void>;
+  addOrder: (order: Order) => Promise<void>;
+  updateProfile: (data: Partial<User>) => Promise<void>;
+  isAuthenticated: boolean;
+  loading: boolean;
 }

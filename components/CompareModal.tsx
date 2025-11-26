@@ -104,7 +104,7 @@ const CompareModal: React.FC = () => {
                       ))}
                    </tr>
                    <tr>
-                      <td className="p-4 font-bold text-slate-900 bg-slate-100/50">Hero Claim</td>
+                      <td className="p-4 font-bold text-slate-900 bg-slate-100/50">Primary Benefit</td>
                       {compareList.map(blend => (
                         <td key={blend.id} className="p-4 text-center border-b border-slate-100 italic text-slate-500">
                           "{blend.heroClaim}"
@@ -176,7 +176,7 @@ const CompareModal: React.FC = () => {
                    </tr>
 
                    <tr>
-                      <td className="p-4 font-bold text-slate-900 bg-slate-100/50 rounded-l-lg align-top">Composition</td>
+                      <td className="p-4 font-bold text-slate-900 bg-slate-100/50 rounded-l-lg align-top">Key Ingredients</td>
                       {compareList.map(blend => (
                         <td key={blend.id} className="p-4 text-center border-b border-slate-100 text-xs">
                           {blend.composition.split('|').join(' • ')}

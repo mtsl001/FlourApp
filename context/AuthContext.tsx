@@ -1,94 +1,176 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Order } from '../types';
 import { useData } from './DataContext';
-
-interface AuthContextType {
-  user: User | null;
-  login: (email: string, password?: string, name?: string) => boolean;
-  logout: () => void;
-  addOrder: (order: Order) => void;
-  isAuthenticated: boolean;
-}
+import { supabase } from '../lib/supabaseClient';
+import { AuthContextType } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { placeOrder, users, registerUser } = useData();
-  
-  const [user, setUser] = useState<User | null>(() => {
-    try {
-      const stored = localStorage.getItem('ancientharvest_user');
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  // Initialize Auth State and Listen for Changes
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('ancientharvest_user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('ancientharvest_user');
-    }
-  }, [user]);
+    // Check active session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        mapSessionToUser(session.user);
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
+    });
 
-  // Login function now strictly accepts email, password, and optionally name
-  const login = (email: string, password?: string, name: string = 'Valued Customer'): boolean => {
-    // Admin Login Check - STRICT check on email AND password
-    if (email === 'admin@ancientharvest.co' && password === 'admin') {
-      setUser({
-        name: 'Admin',
-        email: email,
-        role: 'admin',
-        orders: []
-      });
-      return true;
-    }
+    // Listen for changes (sign in, sign out, etc.)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        mapSessionToUser(session.user);
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
+    });
 
-    // Regular User Logic
-    const existingUser = users.find(u => u.email === email);
+    return () => subscription.unsubscribe();
+  }, []); 
+
+  // Helper to map Supabase User to App User
+  const mapSessionToUser = async (supabaseUser: any) => {
+    const email = supabaseUser.email || '';
+    const metadata = supabaseUser.user_metadata || {};
+    const name = metadata.name || email.split('@')[0];
+    const role = email === 'admin@ancientharvest.co' ? 'admin' : 'customer';
+
+    // Fetch Persistent Orders from Supabase DB
+    let orders: Order[] = [];
     
-    // Simulate loading history from local storage for this email if not found in context (legacy support)
-    const existingHistory = localStorage.getItem(`ancientharvest_orders_${email}`);
-    const localOrders = existingHistory ? JSON.parse(existingHistory) : [];
+    const { data: ordersData, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('user_id', supabaseUser.id)
+      .order('created_at', { ascending: false });
 
-    // If user exists, use their name, otherwise use the provided name (or default)
-    const userName = existingUser ? existingUser.name : name;
+    if (!error && ordersData) {
+      orders = ordersData.map((o: any) => ({
+        id: o.id,
+        // Convert timestamp to display string
+        date: new Date(o.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
+        items: o.items || [],
+        total: o.total,
+        status: o.status,
+        shippingAddress: o.shipping_address,
+        customerName: o.customer_name,
+        customerEmail: o.customer_email
+      }));
+    } else {
+      console.error('Error fetching orders:', error);
+    }
 
-    const currentUser: User = existingUser || {
-      name: userName,
+    const currentUser: User = {
+      name,
       email,
-      role: 'customer',
-      orders: localOrders
+      role,
+      phone: metadata.phone || '',
+      address: metadata.address || '',
+      city: metadata.city || '',
+      state: metadata.state || '',
+      zip: metadata.zip || '',
+      orders
     };
 
-    if (!existingUser) {
-      registerUser(currentUser);
-    }
+    // Sync with global user registry for Admin Panel visibility
+    // Note: In a real backend app, admin would query the DB directly.
+    registerUser(currentUser);
 
     setUser(currentUser);
-    return true;
+    setLoading(false);
   };
 
-  const logout = () => {
+  const login = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    return { error };
+  };
+
+  const signup = async (email: string, password: string, name: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name: name,
+        },
+      },
+    });
+    return { error };
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
   };
 
-  const addOrder = (order: Order) => {
+  const addOrder = async (order: Order) => {
     if (!user) return;
+
+    // 1. Insert into Supabase Table for persistence
+    const { error } = await supabase.from('orders').insert({
+      id: order.id,
+      user_id: (await supabase.auth.getUser()).data.user?.id,
+      total: order.total,
+      status: order.status,
+      shipping_address: order.shippingAddress,
+      customer_name: order.customerName,
+      customer_email: order.customerEmail,
+      items: order.items
+      // created_at is handled by default value in DB
+    });
+
+    if (error) {
+      console.error("Error saving order:", error);
+      // We might want to throw here or handle offline logic
+    }
     
+    // 2. Update Local State for immediate UI feedback
     const updatedOrders = [order, ...user.orders];
     const updatedUser = { ...user, orders: updatedOrders };
-    
     setUser(updatedUser);
-    localStorage.setItem(`ancientharvest_orders_${user.email}`, JSON.stringify(updatedOrders));
     
-    // Also push to global DB
+    // 3. Push to Global Data Context (for Admin Panel visibility in current session)
     placeOrder({ ...order, customerEmail: user.email, customerName: user.name });
   };
 
+  const updateProfile = async (data: Partial<User>) => {
+    if (!user) return;
+
+    // Update Supabase Metadata
+    const { error } = await supabase.auth.updateUser({
+      data: {
+        name: data.name ?? user.name,
+        phone: data.phone ?? user.phone,
+        address: data.address ?? user.address,
+        city: data.city ?? user.city,
+        state: data.state ?? user.state,
+        zip: data.zip ?? user.zip,
+      }
+    });
+
+    if (error) {
+      console.error("Error updating profile:", error);
+      throw error;
+    }
+
+    // Optimistic UI Update
+    setUser(prev => prev ? { ...prev, ...data } : null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, addOrder, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, addOrder, updateProfile, isAuthenticated: !!user, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -13,6 +13,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import FAQ from './pages/FAQ';
+import Contact from './pages/Contact';
 import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import Products from './pages/admin/Products';
@@ -56,6 +57,7 @@ const App: React.FC = () => {
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/faq" element={<FAQ />} />
+                    <Route path="/contact" element={<Contact />} />
                     
                     {/* Admin Routes */}
                     <Route path="/admin" element={<AdminLayout />}>
